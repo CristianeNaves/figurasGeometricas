@@ -1,5 +1,11 @@
+.data
+vertices: .word 20, 50, 40, 150, 80, 50
 .text
-
+	addi $a0, $zero, 3
+	la $a1, vertices
+	addi $a2, $zero, 0x38
+	jal poligono
+	
 	addi $t0, $zero, 0xc0   #cor
 	addi $a0, $zero, 30	#x0
 	addi $a1, $zero, 30	#y0
@@ -18,14 +24,12 @@
 	addi $a2, $zero, 30	#x1
 	addi $a3, $zero, 40	#y1
 	jal reta2
-	
 	addi $t0, $zero, 0xc0   #cor
 	addi $a0, $zero, 40	#x0
 	addi $a1, $zero, 40	#y0
 	addi $a2, $zero, 40	#x1
 	addi $a3, $zero, 30	#y1
 	jal reta2
-	
 	addi $t0, $zero, 0x07   #cor
 	addi $a0, $zero, 160	#x0
 	addi $a1, $zero, 0	#y0
@@ -37,6 +41,12 @@
 	addi $a1, $zero, 239	#y0
 	addi $a2, $zero, 319	#x1
 	addi $a3, $zero, 230	#y1
+	jal reta2
+	addi $t0, $zero, 0x00   #cor
+	addi $a0, $zero, 200	#x0
+	addi $a1, $zero, 0	#y0
+	addi $a2, $zero, 3	#x1
+	addi $a3, $zero, 0	#y1
 	jal reta2
 	
 	li $v0, 10
@@ -169,6 +179,66 @@ fin:
 	lw $s0, 0($sp)
 	addi $sp, $sp, 40
 	jr $ra
+
+# $a0 valor do numero de vertices
+# $a1 vetor dos vertices : x1,y1,x2,y2,...
+# $a2 cor
+poligono:
+	add $t0, $zero, $zero #contador
+	addi $sp, $sp, -20
+	sw $a2, 16($sp)
+	sw $a1, 12($sp)
+	sw $a0, 8($sp)
+	sw $ra, 4($sp)
+	sw $t0, 0($sp)
+loop:	
+	lw $a2, 16($sp)
+	lw $a1, 12($sp)
+	lw $a0, 8($sp)
+	lw $t0, 0($sp)
+	
+	slt $t1, $t0, $a0   #contador menor que num vertices
+	beq $t1, $zero, exit		
+	#acessar vertices
+	sll $t1, $t0, 2
+	
+	addi $t0, $t0, 2
+	sw $t0, 0($sp)
+	
+	add $t0, $zero, $a2  # $t0 recebe o parametro cor
+	
+	add $t1, $t1, $a1
+	lw $a0, 0($t1)	     #x1	
+	addi $t1, $t1, 4
+	lw $a1, 0($t1)       #y1		
+	addi $t1, $t1, 4
+	lw $a2, 0($t1)       #x2
+	addi $t1, $t1, 4
+	lw $a3, 0($t1)       #y2
+	
+	jal reta2
+	j loop
+exit:
+	lw $a1, 12($sp)	#vertices
+	lw $t0, 8($sp)  #num vertices
+	add $t0, $t0, $t0 
+	sll $t0, $t0, 2		# (numVertices + numVertices) * 4 	
+	add $t0, $t0, $a1	
+	
+	sub $t0, $t0, 4		# ->acessar ultimo elemento (y1)
+	sub $t1, $t0, 4
+	lw $a2, 0($a1)	     #x2
+	lw $a3, 4($a1)       #y2
+	lw $a0, 0($t1)	     #x1
+	lw $a1, 0($t0)       #y1
+	lw $t0, 16($sp)
+	
+	jal reta2
+	
+	lw $ra, 4($sp)
+	addi $sp, $sp, 8
+	jr $ra	
+
 
 #Copia de ponto.asm
 

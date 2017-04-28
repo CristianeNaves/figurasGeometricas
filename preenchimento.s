@@ -1,5 +1,17 @@
 .text
 
+		
+		li $a0, 0
+		li $a1, 240
+		
+		jal in_borders
+		
+		li $a0, 0
+		li $a1, 0
+		li $a2, 0xff
+		
+		jal preenchimento2
+		
 		li $a0, 0
 		li $a1, 0
 		li $a2, 0x00
@@ -39,6 +51,7 @@ preenchimento2:
 # $a3 cor2
 
 preenchimento:
+		
 		addi $sp, $sp, -24
 		sw $fp, 20($sp) #Sera utilizada a pilha nao somente para a inicializacao e a finalizacao,
 			       #mas tambem no meio do procedimento. Logo, se grava $fp, para poder
@@ -48,6 +61,8 @@ preenchimento:
 		sw $s1, 8($sp)
 		sw $s2, 4($sp)
 		sw $s3, 0($sp)
+		
+		beq $a2, $a3, f_preenchiment #se as cores forem iguais nao faca nada
 		
 		move $fp, $sp #inicio dos dados dinamicos que serao usados nesse programa
 		
@@ -166,26 +181,20 @@ f_is_color:	lw $ra, 12($sp)
 #Retorna 1 se estiver na tela, 0 se nao estiver
 
 in_borders:
-		addiu $t0, $zero, 0xff000000 #endereco inicial mmio
-		mul $t1,$a1, 320  #y * 320
-		addu $t1, $t1, $a0 # y * 320 + x
+		li $t4, 319
+		li $t5, 239
 		
-		addu $t8, $t0, $t1 # $t8 = 0xff000000 + 320 * y + x
+		slt $t0, $a0, $zero
+		slt $t1, $t4, $a0
 		
-		li $a0, 319 # x maximo
-		li $a1, 239 # y maximo
+		or $t0, $t0, $t1
 		
-		addiu $t0, $zero, 0xff000000 #endereco inicial mmio
-		mul $t1,$a1, 320  #y * 320
-		addu $t1, $t1, $a0 # y * 320 + x
+		slt $t2, $a1, $zero
+		slt $t3, $t5, $a1
 		
-		addu $t9, $t0, $t1 # $t0 = 0xff000000 + 320 * y + x
+		or $t2, $t2, $t3
 		
-		addi $t2, $zero, 0xff000000
-		
-		slt $t0, $t8, $t2 # $t8 < 0xff00000 => muito pequeno
-		slt $t1, $t9, $t8 # $t9 (x max, y max) < $t8 => muito grande
-		or $t0, $t0, $t1 # $t0 = {1 se eh muito pequeno ou muito grande; 0 se esta na tela}
+		or $t0, $t0, $t2 # $t0 = {1 se eh muito pequeno ou muito grande; 0 se esta na tela}
 		sub $t0, $zero, $t0 # $t0 = {-1 se eh muito pequeno ou muito grande; 0 se esta na tela}
 		addi $v0, $t0, 1  # $v0 = {0 se eh muito pequeno ou muito grande; 1 se esta na tela}
 		jr $ra

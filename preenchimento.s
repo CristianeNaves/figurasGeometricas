@@ -69,6 +69,18 @@ preenchimento:
 		move $s0, $a2 #cor1
 		move $s1, $a3 #cor2
 		
+		move $s2, $a0 #x
+		move $s3, $a1 #y
+		
+		#ja estao setados os parametros
+		#move $a0, $s2 #x
+		#move $a1, $s3 #y
+		#move $a2, $s0 #cor1
+		
+		jal is_color #verifica se a cor esta certa
+		
+		beq $v0, $zero, l_preenchiment #se a cor esta errada, nao coloque na pilha
+		
 		addi $sp, $sp, -4
 		sh $a0, 2($sp)
 		sh $a1, 0($sp)
@@ -83,40 +95,66 @@ l_preenchiment:
 		
 		move $a0, $s2 #x
 		move $a1, $s3 #y
-		move $a2, $s0 #cor1
-		
-		jal is_color #verifica se a cor esta certa
-		
-		beq $v0, $zero, l_preenchiment #se a cor esta errada volte pro comeco
-		
-		#cor esta certa e eh um elemento do display, entao pinte e olhe os vizinhos
-		
-		move $a0, $s2 #x
-		move $a1, $s3 #y
 		move $a2, $s1 #cor2
 		
 		jal ponto #desenha
 		
+		addi $a0, $s2, -1 #x - 1
+		addi $a1, $s3, 0 #y
+		move $a2, $s0 #cor1
+		
+		jal is_color #verifica se a cor esta certa
+		
+		beq $v0, $zero, cont1 #se a cor esta errada, nao coloque na pilha
+		
 		addi $t0, $s2, -1 #x - 1
 		addi $t1, $s3, 0 #y
+		
 		addi $sp, $sp, -4
 		sh $t0, 2($sp) #x
 		sh $t1, 0($sp) #y
+cont1:		
+		addi $a0, $s2, 1 #x + 1
+		addi $a1, $s3, 0 #y
+		move $a2, $s0 #cor1
+		
+		jal is_color #verifica se a cor esta certa
+		
+		beq $v0, $zero, cont2 #se a cor esta errada, nao coloque na pilha
 		
 		addi $t0, $s2, 1 #x + 1
 		addi $t1, $s3, 0 #y
+		
 		addi $sp, $sp, -4
 		sh $t0, 2($sp) #x
 		sh $t1, 0($sp) #y
+cont2:
+		addi $a0, $s2, 0 #x
+		addi $a1, $s3, -1 #y - 1
+		move $a2, $s0 #cor1
+		
+		jal is_color #verifica se a cor esta certa
+		
+		beq $v0, $zero, cont3 #se a cor esta errada, nao coloque na pilha
 		
 		addi $t0, $s2, 0 #x
 		addi $t1, $s3, -1 #y - 1
+		
 		addi $sp, $sp, -4
 		sh $t0, 2($sp) #x
 		sh $t1, 0($sp) #y
+cont3:
+		addi $a0, $s2, 0 #x
+		addi $a1, $s3, 1 #y + 1
+		move $a2, $s0 #cor1
 		
+		jal is_color #verifica se a cor esta certa
+		
+		beq $v0, $zero, l_preenchiment #se a cor esta errada, nao coloque na pilha
+			
 		addi $t0, $s2, 0 #x
 		addi $t1, $s3, 1 #y + 1
+		
 		addi $sp, $sp, -4
 		sh $t0, 2($sp) #x
 		sh $t1, 0($sp) #y

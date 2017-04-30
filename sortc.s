@@ -1,4 +1,3 @@
-
 	# .file		Indica o primeiro inteiro como o número de indice do arquivo na tabela e a string que segue como o nome do arquivo
 	# .section		Monta o código que a segue sobre um certo nome
 	# .previous		Troca a section atual com a anterior mais recente
@@ -26,7 +25,7 @@
 		.globl	v #Torna o label v como visivel para todos os programas parciais ligados com este.
 		.data	  #É usado para separar as declarações de variáveis	
 		.align	2
-		.type	v, @object
+		#.type	v, @object
 		.size	v, 40
 	v:
 		.word	5   #É usado para alocar e inicializar espaço para as variáveis
@@ -44,11 +43,45 @@
 	.LC0:
 		.ascii	"%d\011\000"  #Monta cada string passada em endereços consecutivos, sem a quebra automatica de fim de linha.
 		.text				  #Mostra para o montador que os 'textos' apos o .text são instruções de linguagem 
-		.align	2
+		#.align	2
 		.globl	show
 		.set	nomips16
 		.ent	show
-		.type	show, @function
+		#.type	show, @function
+		
+	main:
+		.frame	$fp,24,$31		# vars= 0, regs= 2/0, args= 16, gp= 0
+		.mask	0xc0000000,-4
+		.fmask	0x00000000,0
+		.set	noreorder
+		.set	nomacro
+		
+		addiu	$sp,$sp,-24
+		sw	$31,20($sp)
+		sw	$fp,16($sp)
+		move	$fp,$sp
+		la      $4, v
+		li	$5,10			# 0xa
+		jal	show
+		nop
+
+		la      $4, v
+		li	$5,10			# 0xa
+		jal	sort
+		nop
+
+		la	$4, v
+		li	$5,10			# 0xa
+		jal	show
+		nop
+
+		move	$sp,$fp
+		lw	$31,20($sp)
+		lw	$fp,16($sp)
+		addiu	$sp,$sp,24
+		li	$2,10
+		syscall
+		
 	show:
 		.frame	$fp,32,$31		# vars= 8, regs= 2/0, args= 16, gp= 0
 		.mask	0xc0000000,-4
@@ -71,12 +104,9 @@
 		sll	$2,$2,2
 		lw	$3,32($fp)
 		addu	$2,$3,$2
-		lw	$2,0($2)
-		lui	$3,%hi(.LC0)
-		addiu	$4,$3,%lo(.LC0)
-		move	$5,$2
-		jal	printf
-		nop
+		lw	$4,0($2)
+		li	$2,1
+		syscall
 
 		lw	$2,16($fp)
 		addiu	$2,$2,1
@@ -87,27 +117,23 @@
 		slt	$2,$3,$2
 		bne	$2,$0,.L3
 		nop
-
-		li	$4,10			# 0xa
-		jal	putchar
-		nop
-
+		
 		move	$sp,$fp
 		lw	$31,28($sp)
 		lw	$fp,24($sp)
 		addiu	$sp,$sp,32
-		j	$31
+		jr	$31
 		nop
 
 		.set	macro
 		.set	reorder
 		.end	show
 		.size	show, .-show
-		.align	2
+		#.align	2
 		.globl	swap
 		.set	nomips16
 		.ent	swap
-		.type	swap, @function
+		#.type	swap, @function
 	swap:
 		.frame	$fp,16,$31		# vars= 8, regs= 1/0, args= 0, gp= 0
 		.mask	0x40000000,-4
@@ -147,18 +173,18 @@
 		move	$sp,$fp
 		lw	$fp,12($sp)
 		addiu	$sp,$sp,16
-		j	$31
+		jr	$31
 		nop
 
 		.set	macro
 		.set	reorder
 		.end	swap
 		.size	swap, .-swap
-		.align	2
+		#.align	2
 		.globl	sort
 		.set	nomips16
 		.ent	sort
-		.type	sort, @function
+		#.type	sort, @function
 	sort:
 		.frame	$fp,32,$31		# vars= 8, regs= 2/0, args= 16, gp= 0
 		.mask	0xc0000000,-4
@@ -227,58 +253,22 @@
 		lw	$31,28($sp)
 		lw	$fp,24($sp)
 		addiu	$sp,$sp,32
-		j	$31
+		jr	$31
 		nop
 
 		.set	macro
 		.set	reorder
 		.end	sort
 		.size	sort, .-sort
-		.align	2
+		#.align	2
 		.globl	main
 		.set	nomips16
 		.ent	main
-		.type	main, @function
-	main:
-		.frame	$fp,24,$31		# vars= 0, regs= 2/0, args= 16, gp= 0
-		.mask	0xc0000000,-4
-		.fmask	0x00000000,0
-		.set	noreorder
-		.set	nomacro
-		
-		addiu	$sp,$sp,-24
-		sw	$31,20($sp)
-		sw	$fp,16($sp)
-		move	$fp,$sp
-		lui	$2,%hi(v)
-		addiu	$4,$2,%lo(v)
-		li	$5,10			# 0xa
-		jal	show
-		nop
-
-		lui	$2,%hi(v)
-		addiu	$4,$2,%lo(v)
-		li	$5,10			# 0xa
-		jal	sort
-		nop
-
-		lui	$2,%hi(v)
-		addiu	$4,$2,%lo(v)
-		li	$5,10			# 0xa
-		jal	show
-		nop
-
-		move	$sp,$fp
-		lw	$31,20($sp)
-		lw	$fp,16($sp)
-		addiu	$sp,$sp,24
-		j	$31
-		nop
+		#.type	main, @function
+	
 
 		.set	macro
 		.set	reorder
 		.end	main
 		.size	main, .-main
 		.ident	"GCC: (GNU) 4.4.6"
-Contact GitHub API Training Shop Blog About
-© 2017 GitHub, Inc. Terms Privacy Security Status Help

@@ -409,23 +409,25 @@ loop:
 	lw $a0, 8($sp)
 	lw $t0, 0($sp)
 	
-	slt $t1, $t0, $a0   #contador menor que num vertices
+	add $a0, $a0, $a0
+	subi $a0, $a0, 2 
+	slt $t1, $t0, $a0   #contador menor que num (vertices + num vertices) - 2
 	beq $t1, $zero, exit		
 	#acessar vertices
 	sll $t1, $t0, 2
 	
-	addi $t0, $t0, 2
+	addi $t0, $t0, 2  #incrementa contador de dois em dois
 	sw $t0, 0($sp)
 	
 	add $t0, $zero, $a2  # $t0 recebe o parametro cor
 	
-	add $t1, $t1, $a1
+	add $t1, $t1, $a1    #vetor[contador]
 	lw $a0, 0($t1)	     #x1	
-	addi $t1, $t1, 4
+	addi $t1, $t1, 4     #vetor[contador + 1]	
 	lw $a1, 0($t1)       #y1		
-	addi $t1, $t1, 4
+	addi $t1, $t1, 4     #vetor[contador + 2]
 	lw $a2, 0($t1)       #x2
-	addi $t1, $t1, 4
+	addi $t1, $t1, 4     #vetor[contador + 3]
 	lw $a3, 0($t1)       #y2
 	
 	jal reta2
@@ -450,6 +452,7 @@ exit:
 	lw $ra, 4($sp)
 	addi $sp, $sp, 8
 	jr $ra	
+
 
 
 #Copia de ponto.asm

@@ -1,23 +1,24 @@
-	# .file
-	# .section
-	# .mdebug
-	# .previous
-	# .nan
-	# .gnu_attribute
+
+	# .file		Indica o primeiro inteiro como o número de indice do arquivo na tabela e a string que segue como o nome do arquivo
+	# .section		Monta o código que a segue sobre um certo nome
+	# .previous		Troca a section atual com a anterior mais recente
+	# .gnu_attribute	Atribui ao arquivo um valor de objeto gnu, sendo o primeiro argumento um indicador do tipo de hardware para operações de ponto flutuante a máquina possui
 	# .globl	Torna o label v como visivel para todos os programas parciais ligados com este.
 	# .data  	É usado para separar as declarações de variáveis
-	# .align
-	# .type
+	# .align	Alinha o contador de endereços de forma que ele sempre seja um numero multiplo do argumento
+	# .type 	Usado para atribuir um tipo a um simbolo
 	# .size		Indica o tamanho em bytes do label v.
 	# .word  	É usado para alocar e inicializar espaço para as variáveis
-	# .rdata
+	# .rdata 	Indica dados para serem usados apenas para leitura
 	# .ascii  	Monta cada string passada em endereços consecutivos, sem a quebra automatica de fim de linha.
 	# .text   	Mostra para o montador que os 'textos' apos o .text são instruções de linguagem
-	# .ent
-	# .frame
-	# .mask
-	# .fmask
-	# .set
+	# .ent 		Marca o começo de uma função
+	# .frame 	Descreve o tamanho da janela da pilha, geralmente o ponteiro da janela é guardado em $fp ou $sp
+	# .mask 	Indica qual registrador de inteiros esta salvo na pilha
+	# .fmask 	Indica quais registradores de ponto flutuante estão salvos na pilha
+	# .set 		Habilita ou desabilitas caracteristicas do montador indicadas pelo argumento, colocando-se "caracteristica", para habilitar e "nocaracteristica" para desabilitar
+	# .ident 	Coloca uma tag qualquer no arquivo montado
+	
 		.file	1 "sortc.c" 
 		.section .mdebug.abi32
 		.previous
@@ -279,3 +280,5 @@
 		.end	main
 		.size	main, .-main
 		.ident	"GCC: (GNU) 4.4.6"
+Contact GitHub API Training Shop Blog About
+© 2017 GitHub, Inc. Terms Privacy Security Status Help

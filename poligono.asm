@@ -1,7 +1,7 @@
 .data
-vertices: .word 20, 50, 40, 150, 80, 50
+vertices: .word 100, 100, 150, 100, 170, 150, 150, 200, 100, 200, 30, 150    #x1,y1,x2,y2,x3,y3...
 .text
-	addi $a0, $zero, 3
+	addi $a0, $zero, 6
 	la $a1, vertices
 	addi $a2, $zero, 0x38
 	jal poligono
@@ -154,23 +154,25 @@ loop:
 	lw $a0, 8($sp)
 	lw $t0, 0($sp)
 	
-	slt $t1, $t0, $a0   #contador menor que num vertices
+	add $a0, $a0, $a0
+	subi $a0, $a0, 2 
+	slt $t1, $t0, $a0   #contador menor que num (vertices + num vertices) - 2
 	beq $t1, $zero, exit		
 	#acessar vertices
 	sll $t1, $t0, 2
 	
-	addi $t0, $t0, 2
+	addi $t0, $t0, 2  #incrementa contador de dois em dois
 	sw $t0, 0($sp)
 	
 	add $t0, $zero, $a2  # $t0 recebe o parametro cor
 	
-	add $t1, $t1, $a1
+	add $t1, $t1, $a1    #vetor[contador]
 	lw $a0, 0($t1)	     #x1	
-	addi $t1, $t1, 4
+	addi $t1, $t1, 4     #vetor[contador + 1]	
 	lw $a1, 0($t1)       #y1		
-	addi $t1, $t1, 4
+	addi $t1, $t1, 4     #vetor[contador + 2]
 	lw $a2, 0($t1)       #x2
-	addi $t1, $t1, 4
+	addi $t1, $t1, 4     #vetor[contador + 3]
 	lw $a3, 0($t1)       #y2
 	
 	jal reta2

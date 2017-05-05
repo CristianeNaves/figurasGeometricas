@@ -8,22 +8,18 @@ main:
 	ori $a0, $zero, 160	# X = 160
 	ori $a1, $zero, 120	# Y = 120
 	ori $a2, $zero, 60	# Raio = 60
-	ori $a3, $zero, 0x000000FF	# cor = 0xFF
+	ori $a3, $zero, 0xfa	# cor = 0xFF
 	jal circulo
 	j exit
 
 # Funcao que desenha um ponto dadas coordenadas (X, Y)	
 ponto:
-	lw $t0, largura 	# t0 = 320
-	multu $a1, $t0		# 320 * Y (unsigned)
-	mflo $a1		# move p/ a1 o resultado da multiplicacao contido no reg LO 
-	addu $a0, $a0, $a1	# (320*Y) + X
-	lw $t1, bmpAdd		# carrega em t1 o valor de bmpAdd (endereço inicial do display)
-	addu $t1, $t1, $a0	# t1 = endereço inicial do display + posisão calculada
-	
-	sb $t0, 0($t1)		# armazena o byte menos significativo em t0
-	
-	jr $ra			# retorna para a main
+	addiu $t0, $zero, 0xff000000 #endereco inicial mmio
+	mul $t1,$a1, 320  #y * 320
+	addu $t1, $t1, $a0 # y * 320 + x
+	addu $t0, $t0, $t1 #0xff000000 + 320 * y + x
+	sb $a2, 0($t0) #desenha
+	jr $ra
 	
 # A função a seguir utiliza o "midpoint circle algorithm" para realizar o desenho do circulo.
 # https://en.wikipedia.org/wiki/Midpoint_circle_algorithm

@@ -50,9 +50,9 @@ main:		li $a0, 2
 		move $s6, $v0
 		
 		li $a0, 150
-		li $a1, 80
+		li $a1, 120
 		li $a2, 150
-		li $a3, 80
+		li $a3, 120
 		li $t0, 50
 		li $t1, 50
 		li $t2, 0x38
@@ -65,6 +65,33 @@ main:		li $a0, 2
 		li $t0, 10
 		li $t1, 10
 		li $t2, 0x07
+		jal elipse
+		
+		li $a0, 150
+		li $a1, 100
+		li $a2, 150
+		li $a3, 140
+		li $t0, 30
+		li $t1, 10
+		li $t2, 0xc0
+		jal elipse
+		
+		li $a0, 160
+		li $a1, 170
+		li $a2, 180
+		li $a3, 170
+		li $t0, 10
+		li $t1, 30
+		li $t2, 0x01
+		jal elipse
+		
+		li $a0, 160
+		li $a1, 160
+		li $a2, 180
+		li $a3, 180
+		li $t0, 10
+		li $t1, 30
+		li $t2, 0x01
 		jal elipse
 		
 		li $v0, 10
@@ -144,8 +171,14 @@ div_nao_zero:
 		
 		move $s4, $v0 # s4 (phase) = arccos( (y1 - y0) / sqrt((x2 - x1)^2 + (y2 - y1)^2) )
 		
-c_elipse:	mtc1 $zero, $f31
-		cvt.s.w $f31, $f31 #f31 = 0, t
+c_elipse:	
+		mtc1 $zero, $f0
+		cvt.s.w $f0, $f0
+		
+		la $t0, pi2
+		lwc1 $f31, 0($t0)
+		
+		sub.s $f31, $f0, $f31
 		
 		li $t0, 560
 		mtc1, $t0, $f0
@@ -153,12 +186,12 @@ c_elipse:	mtc1 $zero, $f31
 		
 		la $t0, pi
 		lwc1 $f30, 0($t0) #f30 = pi
-		mov.s $f28, $f30
 		div.s $f30, $f30, $f0 #f30 = pi / 560, passo iterativo
 		
 		mtc1 $s4, $f29 #f29 = phase
 		
-		add.s $f28, $f28, $f28 # f28 = 2 * pi, final
+		la $t0, pi2
+		lwc1 $f28, 0($t0) #f30 = pi / 4
 		
 		li $t0, 1000
 		mtc1 $t0, $f27
@@ -205,7 +238,33 @@ l_elipse:	### x
 		
 		move $a0, $s6
 		move $a1, $s7
-		move $a2, $s5
+		jal in_borders
+		
+		beq $v0, $zero f_elipse
+		
+		add $a0, $zero, $s6
+		add $a1, $zero, $s7
+		add $a2, $zero, $s5
+		jal ponto #pinta
+		sub $a0, $zero, $s6
+		add $a0, $a0, $s0
+		add $a0, $a0, $s0
+		add $a1, $zero, $s7
+		add $a2, $zero, $s5
+		jal ponto #pinta
+		add $a0, $zero, $s6
+		sub $a1, $zero, $s7
+		add $a1, $a1, $s2
+		add $a1, $a1, $s2
+		add $a2, $zero, $s5
+		jal ponto #pinta
+		sub $a0, $zero, $s6
+		add $a0, $a0, $s0
+		add $a0, $a0, $s0
+		sub $a1, $zero, $s7
+		add $a1, $a1, $s2
+		add $a1, $a1, $s2
+		add $a2, $zero, $s5
 		jal ponto #pinta
 		
 		add.s $f31, $f31, $f30 #t = t + passo iterativo
@@ -214,6 +273,7 @@ l_elipse:	### x
 		
 		bc1t l_elipse 
 		
+f_elipse:	
 		lw $ra, 32($sp)
 		lw $s0, 28($sp)
 		lw $s1, 24($sp)
@@ -269,7 +329,7 @@ arccos:
 		lw $s0, 8($sp)
 		lw $s1, 4($sp)
 		lw $s2, 0($sp)
-		add $sp, $sp, 12
+		add $sp, $sp, 16
 		jr $ra
 
 #Funcao sin
@@ -371,7 +431,7 @@ sin:
 		lw $s0, 8($sp)
 		lw $s1, 4($sp)
 		lw $s2, 0($sp)
-		add $sp, $sp, 12
+		add $sp, $sp, 16
 		jr $ra
 
 #Funcao cos
@@ -476,7 +536,7 @@ cos:
 		lw $s0, 8($sp)
 		lw $s1, 4($sp)
 		lw $s2, 0($sp)
-		add $sp, $sp, 12
+		add $sp, $sp, 16
 		jr $ra
 
 #Funcao div_f_i
@@ -571,3 +631,28 @@ ponto:
 	addu $t0, $t0, $t1 #0xff000000 + 320 * y + x
 	sb $a2, 0($t0) #desenha
 	jr $ra
+
+#funcao in_borders
+# $a0 x0
+# $a1 y0
+#Verifica se o ponto (x0, y0) esta na tela do display
+#Retorna 1 se estiver na tela, 0 se nao estiver
+
+in_borders:
+		li $t4, 319
+		li $t5, 239
+		
+		slt $t0, $a0, $zero
+		slt $t1, $t4, $a0
+		
+		or $t0, $t0, $t1
+		
+		slt $t2, $a1, $zero
+		slt $t3, $t5, $a1
+		
+		or $t2, $t2, $t3
+		
+		or $t0, $t0, $t2 # $t0 = {1 se eh muito pequeno ou muito grande; 0 se esta na tela}
+		sub $t0, $zero, $t0 # $t0 = {-1 se eh muito pequeno ou muito grande; 0 se esta na tela}
+		addi $v0, $t0, 1  # $v0 = {0 se eh muito pequeno ou muito grande; 1 se esta na tela}
+		jr $ra

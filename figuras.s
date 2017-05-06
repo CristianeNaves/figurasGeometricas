@@ -82,6 +82,7 @@ nao_poligono: .word 100, 100, 200, 200, 100, 200, 200, 100
 	addi $a2, $zero, 0x64
 	jal poligono
 	
+	
 	li $v0, 10
 	syscall
 
@@ -491,6 +492,68 @@ exit:
 	addi $sp, $sp, 8
 	jr $ra	
 
+# Funcao Quadrado recebe:
+# $a0 x1   word
+# $a1 y1   word
+# $a2 lado word
+# $a3  cor  byte
+quadrado:
+	addi $sp, $sp, -20
+	
+	sw   $s0, 0($sp)
+	sw   $s1, 4($sp)
+	sw   $s2, 8($sp)
+	sw   $s3, 12($sp)
+	sw   $ra, 16($sp)
+	
+	move $s2, $a2 # salva lado
+	move $s3, $a3 # salva a cor
+	li $t0, 2
+	div $a2, $t0
+	mflo $t0
+	# Checagem para ver se fica fora do bitmap.
+	sub $t1, $a0, $t0 # t1 = p1x
+	add $t2, $a1, $t0 # t2 = p1y
+	add  $s0, $t1, $a2 # s0 = p1x + L = p2x
+	addi $s1 $t2, 0  #  s1 = t2 = p2y
+	
+	move $a0, $t1
+	move $a1, $t2
+	move $a2, $s0
+	move $a3, $s1
+	move $t0, $s3
+	jal reta2 # reta p1 -> p2
+	
+	move $a0, $s0 # a0 = p2x 
+	move $a1, $s1 # a1 = p2y
+	move $a2, $s0 # a2 = p2x  = p3x
+	sub  $a3, $s1, $s2 # a3 = p2y - L 
+	move $s0, $a2  # s0 = p3x
+	move $s1, $a3  # s1 = p3y
+	move $t0, $s3
+	jal reta2
+	move $a0, $s0
+	move $a1, $s1
+	sub  $a2, $s0, $s2
+	move $a3, $s1
+	move $t0, $s3
+	move $s0, $a2
+	move $s1, $a3
+	jal reta2
+	move $a0, $s0
+	move $a1, $s1
+	move $a2, $s0
+	add  $a3, $s1, $s2
+	move $t0, $s3
+	jal  reta2
+	lw   $s0, 0($sp)
+	lw   $s1, 4($sp)
+	lw   $s2, 8($sp)
+	lw   $s3, 12($sp)
+	lw   $ra, 16($sp)
+	addi $sp, $sp, 20
+	jr $ra
+
 
 
 #Copia de ponto.asm
@@ -511,3 +574,6 @@ ponto:
 	addu $t0, $t0, $t1 #0xff000000 + 320 * y + x
 	sb $a2, 0($t0) #desenha
 	jr $ra
+
+
+

@@ -4,6 +4,14 @@
 	li $a2, 80
 	li $a3,0x38
 	jal trieq
+	
+	li $a0, 300
+	li $a1, 200
+	li $a2, 100
+	li $a3,0x88
+	jal trieq
+	
+	
 	li $v0, 10
 	syscall
 	

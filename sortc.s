@@ -22,13 +22,13 @@
 		.section .mdebug.abi32
 		.previous
 		.gnu_attribute 4, 1
-		.globl	v #Torna o label v como visivel para todos os programas parciais ligados com este.
-		.data	  #É usado para separar as declarações de variáveis	
+		.globl	v
+		.data
 		.align	2
 		#.type	v, @object
 		.size	v, 40
 	v:
-		.word	5   #É usado para alocar e inicializar espaço para as variáveis
+		.word	5 
 		.word	8
 		.word	3
 		.word	4
@@ -41,8 +41,8 @@
 		.rdata
 		.align	2
 	.LC0:
-		.ascii	"%d\011\000"  #Monta cada string passada em endereços consecutivos, sem a quebra automatica de fim de linha.
-		.text				  #Mostra para o montador que os 'textos' apos o .text são instruções de linguagem 
+		.ascii	"%d\011\000"
+		.text
 		#.align	2
 		.globl	show
 		.set	nomips16
@@ -104,6 +104,12 @@
 		sll	$2,$2,2
 		lw	$3,32($fp)
 		addu	$2,$3,$2
+#		lw	$2,0($2)
+#		lui	$3,%hi(.LC0)
+#		addiu	$4,$3,%lo(.LC0)
+#		move	$5,$2		
+#		jal	printf		
+#		nop
 		lw	$4,0($2)
 		li	$2,1
 		syscall
@@ -117,7 +123,9 @@
 		slt	$2,$3,$2
 		bne	$2,$0,.L3
 		nop
-		
+#		li	$4,10			# 0xa		
+#		jal	putchar		
+#		nop
 		move	$sp,$fp
 		lw	$31,28($sp)
 		lw	$fp,24($sp)
@@ -265,7 +273,41 @@
 		.set	nomips16
 		.ent	main
 		#.type	main, @function
-	
+ #		main:		 +	
+ #		.frame	$fp,24,$31		# vars= 0, regs= 2/0, args= 16, gp= 0
+ #		.mask	0xc0000000,-4		
+ #		.fmask	0x00000000,0		
+ #		.set	noreorder		
+ #		.set	nomacro		
+ #				
+ #		addiu	$sp,$sp,-24		
+ #		sw	$31,20($sp)		
+ #		sw	$fp,16($sp)		
+ #		move	$fp,$sp		
+ #		lui	$2,%hi(v)		
+ #		addiu	$4,$2,%lo(v)		
+ #		li	$5,10			# 0xa		
+ #		jal	show		
+ #		nop		
+ #		
+ #		lui	$2,%hi(v)		
+ #		addiu	$4,$2,%lo(v)		
+ #		li	$5,10			# 0xa		
+ #		jal	sort		
+ #		nop		
+ #		
+ #		lui	$2,%hi(v)		
+ #		addiu	$4,$2,%lo(v)		
+ #		li	$5,10			# 0xa		
+ #		jal	show		
+ #		nop		
+ #		
+ #		move	$sp,$fp		
+ #		lw	$31,20($sp)		
+ #		lw	$fp,16($sp)		
+ #		addiu	$sp,$sp,24		
+ #		j	$31		
+ #		nop
 
 		.set	macro
 		.set	reorder

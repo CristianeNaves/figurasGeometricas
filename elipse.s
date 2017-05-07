@@ -1,8 +1,8 @@
 .data
 
-pi:		.word 0x40490fdb
-pi4:		.word 0x3f490fdb
-pi2:		.word 0x3fc90fdb
+pi:		.word 0x40490fdb #valor de pi em precisao simples
+pi4:		.word 0x3f490fdb #valor de pi / 2 em precisao simples
+pi2:		.word 0x3fc90fdb #valor de pi / 4 em precisao simples
 
 .text
 

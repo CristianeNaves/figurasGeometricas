@@ -152,14 +152,14 @@ loop_circulo:
 	
 					
 	addi $s5, $s5, 1		# Y = Y + 1
-	add $s2, $s2, $s5		# erro = erro + Y
-	add $s2, $s2, $s5		# erro = erro + Y
+	add $s2, $s2, $s5		# err = err + Y
+	add $s2, $s2, $s5		# err = err + Y
 
-	bltz $s2, loop_circulo		# Se o erro for menor que 0, repete o loop
+	bltz $s2, loop_circulo		# Se err for menor que 0, repete o loop
 					
 	addi $s4, $s4, -1		# X = X - 1
-	sub $s2, $s2, $s4		# erro = erro - X
-	sub $s2, $s2, $s4		# erro = erro - X
+	sub $s2, $s2, $s4		# err = err - X
+	sub $s2, $s2, $s4		# err = err - X
 		
 	j loop_circulo			# repete o loop	
 	
@@ -390,7 +390,7 @@ in_borders:
 		jr $ra
 
 
-# FunÃ§Ã£o reta recebe:
+# Função reta recebe:
 # $a0 coordenada x do primeiro ponto (x0)
 # $a1 coordenada y do primeiro ponto (y0)
 # $a2 coordenada x do segundo ponto (x1)

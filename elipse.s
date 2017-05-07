@@ -6,7 +6,14 @@ pi2:		.word 0x3fc90fdb
 
 .text
 
-main:		li $a0, 2
+main:
+		li $a0, 0
+		li $a1, 0
+		li $a2, 0xff
+		jal preenchimento2
+		
+		
+		li $a0, 2
 		li $a1, 0
 		jal exp_int
 		move $s0, $v0
@@ -58,6 +65,11 @@ main:		li $a0, 2
 		li $t2, 0x38
 		jal elipse
 		
+		li $a0, 150
+		li $a1, 120
+		li $a2, 0x38
+		jal preenchimento2
+		
 		li $a0, 100
 		li $a1, 100
 		li $a2, 100
@@ -66,6 +78,11 @@ main:		li $a0, 2
 		li $t1, 10
 		li $t2, 0x07
 		jal elipse
+		
+		li $a0, 100
+		li $a1, 100
+		li $a2, 0x07
+		jal preenchimento2
 		
 		li $a0, 150
 		li $a1, 100
@@ -76,6 +93,11 @@ main:		li $a0, 2
 		li $t2, 0xc0
 		jal elipse
 		
+		li $a0, 150
+		li $a1, 120
+		li $a2, 0xc0
+		jal preenchimento2
+		
 		li $a0, 160
 		li $a1, 170
 		li $a2, 180
@@ -85,14 +107,121 @@ main:		li $a0, 2
 		li $t2, 0x01
 		jal elipse
 		
+		li $a0, 170
+		li $a1, 170
+		li $a2, 0x01
+		jal preenchimento2
+		
 		li $a0, 160
 		li $a1, 160
 		li $a2, 180
 		li $a3, 180
-		li $t0, 10
-		li $t1, 30
+		li $t0, 30
+		li $t1, 10
 		li $t2, 0x01
 		jal elipse
+		
+		li $a0, 170
+		li $a1, 170
+		li $a2, 0x01
+		jal preenchimento2
+		
+		li $a0, 250
+		li $a1, 200
+		li $a2, 250
+		li $a3, 200
+		li $t0, 5
+		li $t1, 1
+		li $t2, 0x3f
+		jal elipse
+		
+		li $a0, 250
+		li $a1, 200
+		li $a2, 250
+		li $a3, 200
+		li $t0, 1
+		li $t1, 5
+		li $t2, 0x3f
+		jal elipse
+		
+		li $a0, 250
+		li $a1, 200
+		li $a2, 0x3f
+		jal preenchimento2
+		
+		li $a0, 260
+		li $a1, 215
+		li $a2, 260
+		li $a3, 215
+		li $t0, 5
+		li $t1, 1
+		li $t2, 0x3f
+		jal elipse
+		
+		li $a0, 260
+		li $a1, 215
+		li $a2, 260
+		li $a3, 215
+		li $t0, 1
+		li $t1, 5
+		li $t2, 0x3f
+		jal elipse
+		
+		li $a0, 260
+		li $a1, 215
+		li $a2, 0x3f
+		jal preenchimento2
+		
+		li $a0, 272
+		li $a1, 200
+		li $a2, 272
+		li $a3, 200
+		li $t0, 5
+		li $t1, 1
+		li $t2, 0x3f
+		jal elipse
+		
+		li $a0, 272
+		li $a1, 200
+		li $a2, 272
+		li $a3, 200
+		li $t0, 1
+		li $t1, 5
+		li $t2, 0x3f
+		jal elipse
+		
+		li $a0, 272
+		li $a1, 200
+		li $a2, 0x3f
+		jal preenchimento2
+		
+		li $a0, 237
+		li $a1, 194
+		li $a2, 237
+		li $a3, 194
+		li $t0, 5
+		li $t1, 1
+		li $t2, 0x3f
+		jal elipse
+		
+		li $a0, 237
+		li $a1, 194
+		li $a2, 237
+		li $a3, 194
+		li $t0, 1
+		li $t1, 5
+		li $t2, 0x3f
+		jal elipse
+		
+		li $a0, 237
+		li $a1, 194
+		li $a2, 0x3f
+		jal preenchimento2
+		
+		li $a0, 0
+		li $a1, 0
+		li $a2, 0x15
+		jal preenchimento2
 		
 		li $v0, 10
 		syscall
@@ -122,55 +251,21 @@ elipse:
 		# s1 = a
 		# s2 = y_c
 		# s3 = b
-		# s4 = phase
 		# s5 = cor
-		#tal que o ponto P = (x_c + a * cos(phase + t), y_c + b * cos(phase + t)) esta na elipse
+		#tal que o ponto P = (x_c + a * cos(t), y_c + b * cos(t)) esta na elipse
 		
 		add $s0, $a0, $a2
-		sra $s0, $s0, 1 #s0 = (x1+x2)/2;
+		sra $s0, $s0, 1 #s0 = (x1+x2)/2
 		
 		add $s1, $t0, $t0 #s1 = 2 * r1
 		
 		add $s2, $a1, $a3
-		sra $s2, $s2, 1 #s2 = (y1+y2)/2;
+		sra $s2, $s2, 1 #s2 = (y1+y2)/2
 		
 		add $s3, $t1, $t1 #s1 = 2 * r2
 		
 		move $s5, $t2 #s5 = cor
 
-		bne $a0, $a2, div_nao_zero # Se x1 != x2, nao havera divisao por 0
-		bne $a1, $a3, div_nao_zero # Se x1 != x2, nao havera divisao por 0
-div_zero:	
-		mtc1 $zero $f0
-		cvt.s.w $f0, $f0
-		mfc1 $s4, $f0 #s4 = 0
-		j c_elipse
-div_nao_zero:	
-		sub $t0, $a3, $a1 #t0 = y2 - y1
-		sub $t1, $a2, $a0 #t1 = x2 - x1
-		
-		mult $t0, $t0
-		mflo $t2 #t2 = (y2 - y1)^2
-		
-		mult $t1, $t1
-		mflo $t3 #t3 = (x2 - x1)^2
-		
-		add $t1, $t2, $t3 #t1 = (x2 - x1)^2 + (y2 - y1)^2
-		#t0 = y2 - y1
-		
-		mtc1 $t0, $f0
-		mtc1 $t1, $f1
-		cvt.s.w $f0, $f0
-		cvt.s.w $f1, $f1
-		
-		sqrt.s $f1, $f1 #f1 = sqrt((x2 - x1)^2 + (y2 - y1)^2)
-		div.s $f0, $f0, $f1 # f0 = (y1 - y0) / sqrt((x2 - x1)^2 + (y2 - y1)^2)
-		
-		mfc1 $a0, $f0
-		jal arccos
-		
-		move $s4, $v0 # s4 (phase) = arccos( (y1 - y0) / sqrt((x2 - x1)^2 + (y2 - y1)^2) )
-		
 c_elipse:	
 		mtc1 $zero, $f0
 		cvt.s.w $f0, $f0
@@ -178,7 +273,7 @@ c_elipse:
 		la $t0, pi2
 		lwc1 $f31, 0($t0)
 		
-		sub.s $f31, $f0, $f31
+		sub.s $f31, $f0, $f31 # f31 (t) = -pi / 2
 		
 		li $t0, 560
 		mtc1, $t0, $f0
@@ -188,53 +283,41 @@ c_elipse:
 		lwc1 $f30, 0($t0) #f30 = pi
 		div.s $f30, $f30, $f0 #f30 = pi / 560, passo iterativo
 		
-		mtc1 $s4, $f29 #f29 = phase
-		
 		la $t0, pi2
-		lwc1 $f28, 0($t0) #f30 = pi / 4
-		
-		li $t0, 1000
-		mtc1 $t0, $f27
-		cvt.s.w $f27, $f27 #constante para a multiplicacao
+		lwc1 $f28, 0($t0) #f30 = pi / 2
 		
 l_elipse:	### x
-		add.s $f0, $f29, $f31 #phase + t
+		mov.s $f0, $f31 #t
 		
 		mfc1 $a0, $f0
 		jal cos
 		
 		
-		mtc1 $v0, $f0 # -1 <= cos(phase + t) <= 1
-		mul.s $f0, $f0, $f27 # multiplica por constante -1000 <= f0 <= 1000
-		cvt.w.s $f0, $f0 #inteiroS
-		mfc1 $t0, $f0
+		mtc1 $v0, $f0 # -1 <= cos(t) <= 1
 		
-		mult $t0, $s1
-		mflo $t0 # a * 1000 * cos(phase + t)
-		li $t1, 1000
-		div $t0, $t1
-		mflo $t0 #a * cos(phase + t)
+		mtc1 $s1, $f1 #a
+		cvt.s.w $f1, $f1
+		mul.s $f0, $f0, $f1 # a * cos(t)
+		cvt.w.s $f0, $f0
+		mfc1 $t0, $f0 # a * cos(t)
 		
-		add $s6, $s0, $t0 #s6 (x) = x_c + a * cos(phase + t)
+		add $s6, $s0, $t0 #s6 (x) = x_c + a * cos(t)
 		
 		### y
-		add.s $f0, $f29, $f31 #phase + t
+		mov.s $f0, $f31 #t
 		
 		mfc1 $a0, $f0
 		jal sin
 		
-		mtc1 $v0, $f0 #sin(phase + t)
-		mul.s $f0, $f0, $f27 # multiplica por constante -1000 <= f0 <= 1000
-		cvt.w.s $f0, $f0 #inteiro
-		mfc1 $t0, $f0
+		mtc1 $v0, $f0 #sin(t)
 		
-		mult $t0, $s3
-		mflo $t0 # b *1000 * sin(phase + t)
-		li $t1, 1000
-		div $t0, $t1
-		mflo $t0 #a * sin(phase + t)
+		mtc1 $s3, $f1
+		cvt.s.w $f1, $f1
+		mul.s $f0, $f0, $f1 # b * sin(t)
+		cvt.w.s $f0, $f0
+		mfc1 $t0, $f0 #b * sin(t)
 		
-		add $s7, $s2, $t0 #s7 (y) = y_c + b * sin(phase + t)
+		add $s7, $s2, $t0 #s7 (y) = y_c + b * sin(t)
 		
 		move $a0, $s6
 		move $a1, $s7
@@ -269,7 +352,7 @@ l_elipse:	### x
 		
 		add.s $f31, $f31, $f30 #t = t + passo iterativo
 		
-		c.lt.s $f31, $f28 # t eh menor que o final (2*pi) ?
+		c.lt.s $f31, $f28 # t eh menor que o final (pi / 2) ?
 		
 		bc1t l_elipse 
 		
@@ -307,7 +390,7 @@ arccos:
 		sub.s $f0, $f0, $f1
 		mfc1 $s1, $f0 #resultado = pi/2 -x
 		
-		li $s2, 6 #fator da divisao s2 = 3!
+		li $s2, 6 #fator da divisao s2 = 3*2
 		
 		move $a0, $s0
 		li $a1, 3
@@ -315,15 +398,36 @@ arccos:
 				
 		move $a0, $v0
 		move $a1, $s2
-		jal div_f_i #x^3/3!
+		jal div_f_i #x^3/3*2
 		
 		mtc1 $s1, $f0
 		mtc1 $v0, $f1
 		
 		sub.s $f0, $f0, $f1
-		mfc1 $s1, $f0 #resultado = 1 -x -x^3/3!
+		mfc1 $s1, $f0 #resultado = 1 -x -x^3/3*2
 		
-		move $v0, $s1 #arccos($a0) = 1 -x -x^3/3!
+		li $s2, 40
+		
+		move $a0, $s0
+		li $a1, 5
+		jal exp #x^5
+				
+		move $a0, $v0
+		move $a1, $s2
+		jal div_f_i # x^5/2*4*5
+		
+		move $a0, $v0
+		li $a1, 3
+		jal mul_f_i # 3*x^5/2*4*5
+		
+		mtc1 $s1, $f0
+		mtc1 $v0, $f1
+		
+		sub.s $f0, $f0, $f1
+		mfc1 $s1, $f0 #resultado = 1 -x -x^3/3.2 - 3*x^5/2*4*5
+		
+		
+		move $v0, $s1 #arccos($a0) = 1 -x -x^3/3.2 - 3*x^5/2*4*5
 		
 		lw $ra, 12($sp)
 		lw $s0, 8($sp)
@@ -425,7 +529,28 @@ sin:
 		add.s $f0, $f0, $f1
 		mfc1 $s1, $f0 #resultado = 1 -x^3/3! + x^5/5! - x^7/7! + x^9/9!
 		
-		move $v0, $s1 #sin($a0) = 1 -x^3/3! + x^5/5! - x^7/7! + x^9/9!
+		ori $t0, $zero, 10
+		mult $s2, $t0
+		mflo $s2 #s2 = 10!
+		ori $t0, $zero, 11
+		mult $s2, $t0
+		mflo $s2 #s2 = 11!
+		
+		move $a0, $s0
+		li $a1, 11
+		jal exp #x^11
+				
+		move $a0, $v0
+		move $a1, $s2
+		jal div_f_i #x^11/11!
+		
+		mtc1 $s1, $f0
+		mtc1 $v0, $f1
+		
+		sub.s $f0, $f0, $f1
+		mfc1 $s1, $f0 #resultado = 1 -x^3/3! + x^5/5! - x^7/7! + x^9/9! - x^11/11!
+		
+		move $v0, $s1 #sin($a0) = 1 -x^3/3! + x^5/5! - x^7/7! + x^9/9! - x^11/11!
 		
 		lw $ra, 12($sp)
 		lw $s0, 8($sp)
@@ -530,6 +655,27 @@ cos:
 		add.s $f0, $f0, $f1
 		mfc1 $s1, $f0 #resultado = 1 -x^2/2! + x^4/4! - x^6/6 + x^8/8!
 		
+		ori $t0, $zero, 9
+		mult $s2, $t0
+		mflo $s2 #s2 = 9!
+		ori $t0, $zero, 10
+		mult $s2, $t0
+		mflo $s2 #s2 = 10!
+		
+		move $a0, $s0
+		li $a1, 10
+		jal exp #x^10
+				
+		move $a0, $v0
+		move $a1, $s2
+		jal div_f_i #x^10/10!
+		
+		mtc1 $s1, $f0
+		mtc1 $v0, $f1
+		
+		sub.s $f0, $f0, $f1
+		mfc1 $s1, $f0 #resultado = 1 -x^2/2! + x^4/4! - x^6/6 + x^8/8! - x^10/10!
+		
 		move $v0, $s1 #cos($a0) = 1 -x^2/2! + x^4/4! - x^6/6 + x^8/8!
 		
 		lw $ra, 12($sp)
@@ -552,6 +698,24 @@ div_f_i:
 		cvt.s.w $f1, $f1
 		
 		div.s $f0, $f0, $f1
+		
+		mfc1 $v0, $f0
+		
+		jr $ra
+
+#Funcao mul_f_i
+#a0 mult PONTO FLUTUANTE
+#a1 mult INTEIRO
+#v0 resultado PONTO FLUTUANTE
+
+mul_f_i:	
+		
+		mtc1 $a0, $f0
+		mtc1 $a1, $f1
+		
+		cvt.s.w $f1, $f1
+		
+		mul.s $f0, $f0, $f1
 		
 		mfc1 $v0, $f0
 		
@@ -613,24 +777,219 @@ f_exp:
 		add $sp, $sp, 4
 		jr $ra
 
-#Copia de ponto.asm
+.text
 
-# Função ponto recebe:
-# $s0 endereço de memória do bitmap
-# $a0 coordenada x do pixel a ser colorido
-# $a1 coordenada y do pixel a ser colorido
-# $a2 cor do pixel a ser colorido
-# Salvar os valores anteriores dos registradores na pilha?
-# Seguindo a convencao utilizada os valores $t e $a nao sao
-# permantentes, logo nao precisa usar a pilha
+		
+		li $a0, 0
+		li $a1, 240
+		
+		jal in_borders
+		
+		li $a0, 0
+		li $a1, 0
+		li $a2, 0xff
+		
+		jal preenchimento2
+		
+		li $a0, 0
+		li $a1, 0
+		li $a2, 0x00
+		
+		jal preenchimento2
+		li $v0, 10
+		syscall
 
-ponto:
-	addiu $t0, $zero, 0xff000000 #endereco inicial mmio
-	mul $t1,$a1, 320  #y * 320
-	addu $t1, $t1, $a0 # y * 320 + x
-	addu $t0, $t0, $t1 #0xff000000 + 320 * y + x
-	sb $a2, 0($t0) #desenha
-	jr $ra
+#Funcao preenchimento2
+# $a0 x0 (0, 319) => 16 bits (halfword)
+# $a1 y0 (0, 239) => 16 bits (halfword)
+# $a2 cor2
+
+preenchimento2:
+		addi $sp, $sp -4
+		sw $ra, 0($sp)
+		
+		move $a3, $a2
+		
+		addiu $t0, $zero, 0xff000000 #endereco inicial mmio
+		mul $t1,$a1, 320  #y * 320
+		addu $t1, $t1, $a0 # y * 320 + x
+		addu $t0, $t0, $t1 #0xff000000 + 320 * y + x
+		lb $a2, 0($t0) #pega a cor do pixel
+		
+		jal preenchimento
+
+		lw $ra, 0($sp)
+		addi $sp, $sp 4
+		jr $ra
+
+
+#Funcao preenchimento
+# $a0 x0 (0, 319) => 16 bits (halfword)
+# $a1 y0 (0, 239) => 16 bits (halfword)
+# $a2 cor1
+# $a3 cor2
+
+preenchimento:
+		
+		addi $sp, $sp, -24
+		sw $fp, 20($sp) #Sera utilizada a pilha nao somente para a inicializacao e a finalizacao,
+			       #mas tambem no meio do procedimento. Logo, se grava $fp, para poder
+			       #acessar-se dados estaticos e verificar o fim do loop
+		sw $ra, 16($sp)
+		sw $s0, 12($sp)
+		sw $s1, 8($sp)
+		sw $s2, 4($sp)
+		sw $s3, 0($sp)
+		
+		beq $a2, $a3, f_preenchiment #se as cores forem iguais nao faca nada
+		
+		move $fp, $sp #inicio dos dados dinamicos que serao usados nesse programa
+		
+		move $s0, $a2 #cor1
+		move $s1, $a3 #cor2
+		
+		move $s2, $a0 #x
+		move $s3, $a1 #y
+		
+		#ja estao setados os parametros
+		#move $a0, $s2 #x
+		#move $a1, $s3 #y
+		#move $a2, $s0 #cor1
+		
+		jal is_color #verifica se a cor esta certa
+		
+		beq $v0, $zero, l_preenchiment #se a cor esta errada, nao coloque na pilha
+		
+		addi $sp, $sp, -4
+		sh $a0, 2($sp)
+		sh $a1, 0($sp)
+
+l_preenchiment:
+		
+		beq $fp, $sp, f_preenchiment #se nao ha nenhum dado dinamico, termine
+		
+		lh $s2, 2($sp) #x
+		lh $s3, 0($sp) #y
+		addi $sp, $sp, 4
+		
+		move $a0, $s2 #x
+		move $a1, $s3 #y
+		move $a2, $s1 #cor2
+		
+		jal ponto #desenha
+		
+		addi $a0, $s2, -1 #x - 1
+		addi $a1, $s3, 0 #y
+		move $a2, $s0 #cor1
+		
+		jal is_color #verifica se a cor esta certa
+		
+		beq $v0, $zero, cont1 #se a cor esta errada, nao coloque na pilha
+		
+		addi $t0, $s2, -1 #x - 1
+		addi $t1, $s3, 0 #y
+		
+		addi $sp, $sp, -4
+		sh $t0, 2($sp) #x
+		sh $t1, 0($sp) #y
+cont1:		
+		addi $a0, $s2, 1 #x + 1
+		addi $a1, $s3, 0 #y
+		move $a2, $s0 #cor1
+		
+		jal is_color #verifica se a cor esta certa
+		
+		beq $v0, $zero, cont2 #se a cor esta errada, nao coloque na pilha
+		
+		addi $t0, $s2, 1 #x + 1
+		addi $t1, $s3, 0 #y
+		
+		addi $sp, $sp, -4
+		sh $t0, 2($sp) #x
+		sh $t1, 0($sp) #y
+cont2:
+		addi $a0, $s2, 0 #x
+		addi $a1, $s3, -1 #y - 1
+		move $a2, $s0 #cor1
+		
+		jal is_color #verifica se a cor esta certa
+		
+		beq $v0, $zero, cont3 #se a cor esta errada, nao coloque na pilha
+		
+		addi $t0, $s2, 0 #x
+		addi $t1, $s3, -1 #y - 1
+		
+		addi $sp, $sp, -4
+		sh $t0, 2($sp) #x
+		sh $t1, 0($sp) #y
+cont3:
+		addi $a0, $s2, 0 #x
+		addi $a1, $s3, 1 #y + 1
+		move $a2, $s0 #cor1
+		
+		jal is_color #verifica se a cor esta certa
+		
+		beq $v0, $zero, l_preenchiment #se a cor esta errada, nao coloque na pilha
+			
+		addi $t0, $s2, 0 #x
+		addi $t1, $s3, 1 #y + 1
+		
+		addi $sp, $sp, -4
+		sh $t0, 2($sp) #x
+		sh $t1, 0($sp) #y
+		
+		j l_preenchiment
+		
+f_preenchiment:		
+		lw $fp, 20($sp)
+		lw $ra, 16($sp)
+		lw $s0, 12($sp)
+		lw $s1, 8($sp)
+		lw $s2, 4($sp)
+		lw $s3, 0($sp)
+		addi $sp, $sp, 24
+		jr $ra
+
+#funcao is_color
+# $a0 x0
+# $a1 y0
+# $a2 cor
+#Verifica se o ponto (x0, y0) tem a cor 'cor' (e esta na tela do display)
+#Retorna 1 se estiver na tela, 0 se nao estiver
+
+is_color:
+		addi $sp, $sp, -16
+		sw $ra, 12($sp)
+		sw $s0, 8($sp)
+		sw $s1, 4($sp)
+		sw $s2, 0($sp)
+		
+		move $s0, $a0
+		move $s1, $a1
+		move $s2, $a2
+		
+		jal in_borders #verifica se (x0, y0) esta na tela
+		
+		move $t0, $v0 #esta na tela?
+		move $v0, $zero #nao eh da cor certa
+		
+		beq $t0, $zero, f_is_color #se nao esta na tela, termina
+		
+		addiu $t0, $zero, 0xff000000 #endereco inicial mmio
+		mul $t1,$s1, 320  #y * 320
+		addu $t1, $t1, $s0 # y * 320 + x
+		addu $t0, $t0, $t1 #0xff000000 + 320 * y + x
+		lb $t0, 0($t0) #acha o cor do bit
+		
+		seq $v0, $t0, $s2 #se a cor for igual o retorno sera 1
+		
+f_is_color:	lw $ra, 12($sp)
+		lw $s0, 8($sp)
+		lw $s1, 4($sp)
+		lw $s2, 0($sp)
+		addi $sp, $sp, 16
+		jr $ra
+
 
 #funcao in_borders
 # $a0 x0
@@ -655,4 +1014,20 @@ in_borders:
 		or $t0, $t0, $t2 # $t0 = {1 se eh muito pequeno ou muito grande; 0 se esta na tela}
 		sub $t0, $zero, $t0 # $t0 = {-1 se eh muito pequeno ou muito grande; 0 se esta na tela}
 		addi $v0, $t0, 1  # $v0 = {0 se eh muito pequeno ou muito grande; 1 se esta na tela}
+		jr $ra
+
+# Função ponto recebe:
+# $a0 coordenada x do pixel a ser colorido
+# $a1 coordenada y do pixel a ser colorido
+# $a2 cor do pixel a ser colorido
+# Salvar os valores anteriores dos registradores na pilha?
+# Seguindo a convencao utilizada os valores $t e $a nao sao
+# permantentes, logo nao precisa usar a pilha
+
+ponto:
+		addiu $t0, $zero, 0xff000000 #endereco inicial mmio
+		mul $t1,$a1, 320  #y * 320
+		addu $t1, $t1, $a0 # y * 320 + x
+		addu $t0, $t0, $t1 #0xff000000 + 320 * y + x
+		sb $a2, 0($t0) #desenha
 		jr $ra

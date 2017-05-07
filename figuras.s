@@ -95,13 +95,14 @@ preenchimento2:
 		addi $sp, $sp -4
 		sw $ra, 0($sp)
 		
-		move $a3, $a2
+		move $a3, $a2 #passa cor2 para a3, devido a entrada de preenchimento
 		
 		addiu $t0, $zero, 0xff000000 #endereco inicial mmio
 		mul $t1,$a1, 320  #y * 320
 		addu $t1, $t1, $a0 # y * 320 + x
 		addu $t0, $t0, $t1 #0xff000000 + 320 * y + x
-		lb $a2, 0($t0) #pega a cor do pixel
+		
+		lb $a2, 0($t0) #pega a cor do pixel em a2
 		
 		jal preenchimento
 
